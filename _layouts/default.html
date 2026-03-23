@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
   {% seo %}
 </head>
+  <body>
 <canvas id="fractal-bg"></canvas>
 <script>
 const canvas = document.getElementById('fractal-bg');
@@ -140,7 +141,7 @@ drawMandelbrot();
 window.addEventListener('resize', drawMandelbrot);
 </script>
 -->  
-<body>
+
   <div class="site-wrapper">
     <nav class="site-nav">
       <a href="{{ '/' | relative_url }}">Home</a>
