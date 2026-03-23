@@ -1,0 +1,14 @@
+title: Christopher Wing
+description: Comprehensive Relativity and related work
+url: "https://www.cjwing.com"
+baseurl: ""
+
+markdown: kramdown
+highlighter: rouge
+
+exclude:
+  - README.md
+  - CHANGELOG.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor/
