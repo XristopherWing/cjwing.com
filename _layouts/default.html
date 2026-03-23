@@ -7,141 +7,8 @@
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
   {% seo %}
 </head>
-  <body>
-<canvas id="fractal-bg"></canvas>
-<script>
-const canvas = document.getElementById('fractal-bg');
-const ctx = canvas.getContext('2d');
-
-canvas.style.position = 'fixed';
-canvas.style.top = '0';
-canvas.style.left = '0';
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-canvas.style.zIndex = '-1';
-
-function drawJulia() {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
-
-  // c = i — encodes the 4-cycle structure of the ℂ level
-  const cRe = 0.0;
-  const cIm = 1.0;
-
-  const maxIter = 256;
-  const zoom = 1.5;
-  const imageData = ctx.createImageData(W, H);
-
-  for (let px = 0; px < W; px++) {
-    for (let py = 0; py < H; py++) {
-      // Map pixel to complex plane
-      let zRe = (px - W / 2) / (zoom * W / 2);
-      let zIm = (py - H / 2) / (zoom * H / 2);
-
-      let iter = 0;
-      while (zRe*zRe + zIm*zIm <= 4 && iter < maxIter) {
-        const zRe2 = zRe*zRe - zIm*zIm + cRe;
-        zIm = 2*zRe*zIm + cIm;
-        zRe = zRe2;
-        iter++;
-      }
-
-      const idx = (py * W + px) * 4;
-
-      if (iter === maxIter) {
-        // Interior — deep black
-        imageData.data[idx]   = 0;
-        imageData.data[idx+1] = 0;
-        imageData.data[idx+2] = 8;
-      } else {
-        // Smooth coloring using escape velocity
-        const t = (iter + 1 - Math.log2(
-          Math.log2(zRe*zRe + zIm*zIm)
-        )) / maxIter;
-
-        // Color palette: deep blue → electric blue → near-white
-        // Encodes the three Cayley-Dickson levels as color register
-        imageData.data[idx]   = Math.floor(
-          Math.pow(t, 0.5) * 30
-        );
-        imageData.data[idx+1] = Math.floor(
-          Math.pow(t, 0.4) * 80
-        );
-        imageData.data[idx+2] = Math.floor(
-          Math.pow(t, 0.3) * 255
-        );
-      }
-      imageData.data[idx+3] = 255;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-}
-
-drawJulia();
-window.addEventListener('resize', drawJulia);
-</script>  
-<!--
-<script>
-const canvas = document.getElementById('fractal-bg');
-const ctx = canvas.getContext('2d');
-
-canvas.style.position = 'fixed';
-canvas.style.top = '0';
-canvas.style.left = '0';
-canvas.style.width = '100%';
-canvas.style.height = '100%';
-canvas.style.zIndex = '-1';
-
-function drawMandelbrot() {
-  const W = window.innerWidth;
-  const H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
-
-  const maxIter = 128;
-  const imageData = ctx.createImageData(W, H);
-
-  // Centered view of Mandelbrot set
-  const xMin = -2.5, xMax = 1.0;
-  const yMin = -1.25, yMax = 1.25;
-
-  for (let px = 0; px < W; px++) {
-    for (let py = 0; py < H; py++) {
-      const x0 = xMin + (px / W) * (xMax - xMin);
-      const y0 = yMin + (py / H) * (yMax - yMin);
-      let x = 0, y = 0, iter = 0;
-
-      while (x*x + y*y <= 4 && iter < maxIter) {
-        const xTemp = x*x - y*y + x0;
-        y = 2*x*y + y0;
-        x = xTemp;
-        iter++;
-      }
-
-      const idx = (py * W + px) * 4;
-      if (iter === maxIter) {
-        imageData.data[idx] = 0;
-        imageData.data[idx+1] = 0;
-        imageData.data[idx+2] = 0;
-      } else {
-        const t = iter / maxIter;
-        imageData.data[idx]   = Math.floor(9  * (1-t) * t*t*t * 255);
-        imageData.data[idx+1] = Math.floor(15 * (1-t)*(1-t) * t*t * 255);
-        imageData.data[idx+2] = Math.floor(8.5* (1-t)*(1-t)*(1-t) * t * 255);
-      }
-      imageData.data[idx+3] = 255;
-    }
-  }
-  ctx.putImageData(imageData, 0, 0);
-}
-
-drawMandelbrot();
-window.addEventListener('resize', drawMandelbrot);
-</script>
--->  
-
+<body>
+  <canvas id="fractal-bg"></canvas>
   <div class="site-wrapper">
     <nav class="site-nav">
       <a href="{{ '/' | relative_url }}">Home</a>
@@ -157,5 +24,66 @@ window.addEventListener('resize', drawMandelbrot);
       <p>© {{ site.time | date: '%Y' }} Isa [Lastname]</p>
     </footer>
   </div>
+  <script>
+  const canvas = document.getElementById('fractal-bg');
+  const ctx = canvas.getContext('2d');
+
+  canvas.style.position = 'fixed';
+  canvas.style.top = '0';
+  canvas.style.left = '0';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
+  canvas.style.zIndex = '-1';
+
+  function drawJulia() {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+
+    const cRe = 0.0;
+    const cIm = 1.0;
+
+    const maxIter = 256;
+    const zoom = 1.5;
+    const imageData = ctx.createImageData(W, H);
+
+    for (let px = 0; px < W; px++) {
+      for (let py = 0; py < H; py++) {
+        let zRe = (px - W / 2) / (zoom * W / 2);
+        let zIm = (py - H / 2) / (zoom * H / 2);
+
+        let iter = 0;
+        while (zRe*zRe + zIm*zIm <= 4 && iter < maxIter) {
+          const zRe2 = zRe*zRe - zIm*zIm + cRe;
+          zIm = 2*zRe*zIm + cIm;
+          zRe = zRe2;
+          iter++;
+        }
+
+        const idx = (py * W + px) * 4;
+
+        if (iter === maxIter) {
+          imageData.data[idx]   = 0;
+          imageData.data[idx+1] = 0;
+          imageData.data[idx+2] = 8;
+        } else {
+          const t = (iter + 1 - Math.log2(
+            Math.log2(zRe*zRe + zIm*zIm)
+          )) / maxIter;
+
+          imageData.data[idx]   = Math.floor(Math.pow(t, 0.5) * 30);
+          imageData.data[idx+1] = Math.floor(Math.pow(t, 0.4) * 80);
+          imageData.data[idx+2] = Math.floor(Math.pow(t, 0.3) * 255);
+        }
+        imageData.data[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(imageData, 0, 0);
+  }
+
+  drawJulia();
+  window.addEventListener('resize', drawJulia);
+  </script>
 </body>
 </html>
